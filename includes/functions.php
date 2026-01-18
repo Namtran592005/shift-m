@@ -71,4 +71,21 @@ function sendEmailNotification($to, $subject, $message)
     // writeLog($pdo, 0, 'Gửi Email', "To: $to | Sub: $subject");
     return true;
 }
+
+function generateEmployeeCode($pdo) {
+    // Lấy mã nhân viên cuối cùng (VD: NV009)
+    $stmt = $pdo->query("SELECT ma_nhan_vien FROM nguoi_dung WHERE ma_nhan_vien LIKE 'NV%' ORDER BY LENGTH(ma_nhan_vien) DESC, ma_nhan_vien DESC LIMIT 1");
+    $lastCode = $stmt->fetchColumn();
+
+    if ($lastCode) {
+        // Tách số ra (NV009 -> 9)
+        $number = (int)substr($lastCode, 2);
+        $number++;
+    } else {
+        $number = 1;
+    }
+
+    // Tạo mã mới (NV010)
+    return 'NV' . str_pad($number, 3, '0', STR_PAD_LEFT);
+}
 ?>

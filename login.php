@@ -175,9 +175,8 @@ $logoUrl = $baseUrl . 'assets/img/logo.png';
 
             <form action="actions/login_action.php" method="POST">
                 <div class="form-group">
-                    <label class="form-label">Email</label>
-                    <input type="email" name="email" class="form-input" required autofocus
-                        placeholder="name@company.com">
+                    <label class="form-label">Email hoặc Mã nhân viên (VD: NV001)</label>
+                    <input type="text" name="email" class="form-input" required autofocus placeholder="name@company.com hoặc NV...">
                 </div>
 
                 <div class="form-group">

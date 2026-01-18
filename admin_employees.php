@@ -27,7 +27,7 @@ require_once 'includes/header.php';
                     <thead>
                         <tr>
                             <th style="width: 50px;">Avatar</th>
-                            <th>Họ tên & Email</th>
+                            <th>Thông tin</th> <!-- Gộp Mã và Tên vào cột này -->
                             <th>Mã thẻ NFC</th>
                             <th>Vai trò</th>
                             <th>Trạng thái</th>
@@ -40,6 +40,11 @@ require_once 'includes/header.php';
                                 <td><img src="<?php echo getAvatar($emp['avatar'], $emp['vai_tro']); ?>"
                                         style="width: 36px; height: 36px; border-radius: 50%; object-fit: cover;"></td>
                                 <td>
+                                    <!-- Hiển thị Mã NV đậm, màu xanh -->
+                                    <div
+                                        style="font-weight: 700; color: var(--primary); font-family: monospace; font-size: 13px;">
+                                        <?php echo $emp['ma_nhan_vien']; ?>
+                                    </div>
                                     <div style="font-weight: 600; font-size: 14px;">
                                         <?php echo htmlspecialchars($emp['ho_ten']); ?></div>
                                     <div style="font-size: 12px; color: var(--text-muted);"><?php echo $emp['email']; ?>
