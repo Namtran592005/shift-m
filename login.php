@@ -329,7 +329,7 @@ $logoUrl = $baseUrl . 'assets/img/logo.png';
         <div class="brand-section">
             <img src="<?php echo $logoUrl; ?>" alt="Logo" class="login-logo-img" onerror="this.style.display='none'">
             <h1 class="brand-title">Shift-M</h1>
-            <p class="brand-subtitle">Quản lý nhân sự & Chấm công 4.0</p>
+            <p class="brand-subtitle">Quản lý nhân sự & Chấm công</p>
         </div>
 
         <div class="login-card">
