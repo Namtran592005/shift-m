@@ -1,58 +1,65 @@
 <?php
 require_once '../includes/config.php';
 require_once '../includes/functions.php';
+
+// Kiểm tra xem file thư viện có tồn tại không
+if (!file_exists('../includes/SimpleXLSXGen.php')) {
+    die("Lỗi: Không tìm thấy file includes/SimpleXLSXGen.php");
+}
+require_once '../includes/SimpleXLSXGen.php';
+
+// Tắt lỗi sau khi đã debug xong
+error_reporting(0);
+ini_set('display_errors', 0);
+
 requireAdmin($pdo);
 
 $thang = $_GET['m'] ?? date('m');
 $nam = $_GET['y'] ?? date('Y');
 
-// Ghi log việc xuất file
-writeLog($pdo, $_SESSION['user_id'], 'Xuất Báo cáo', "Bảng lương tháng $thang/$nam");
-
-header('Content-Type: text/csv; charset=utf-8');
-header('Content-Disposition: attachment; filename=BangLuong_Thang' . $thang . '_' . $nam . '.csv');
-
-$output = fopen('php://output', 'w');
-fprintf($output, chr(0xEF) . chr(0xBB) . chr(0xBF)); // BOM UTF-8
-
-// Header
-fputcsv($output, ['ID', 'Họ Tên', 'Email', 'Tổng Giờ', 'Tổng Lương (Gốc)', 'Đã Ứng', 'Thực Lĩnh']);
-
-// Query phức hợp tính lương có hệ số
-$sql = "SELECT u.id, u.ho_ten, u.email,
-        (SELECT SUM(cc.so_gio_lam) 
-         FROM cham_cong cc JOIN dang_ky_ca dkc ON cc.dang_ky_ca_id = dkc.id JOIN ca_lam cl ON dkc.ca_lam_id = cl.id 
-         WHERE dkc.nguoi_dung_id = u.id AND MONTH(cl.ngay) = ? AND YEAR(cl.ngay) = ?) as tong_gio,
-         
-        (SELECT SUM(cc.so_gio_lam * cl.luong_gio * cl.he_so_luong) 
-         FROM cham_cong cc JOIN dang_ky_ca dkc ON cc.dang_ky_ca_id = dkc.id JOIN ca_lam cl ON dkc.ca_lam_id = cl.id 
-         WHERE dkc.nguoi_dung_id = u.id AND MONTH(cl.ngay) = ? AND YEAR(cl.ngay) = ?) as tong_luong,
-
-        (SELECT SUM(so_tien_duyet) FROM ung_luong WHERE nguoi_dung_id = u.id AND thang = ? AND nam = ? AND trang_thai='da_duyet') as da_ung
-        
-        FROM nguoi_dung u WHERE u.vai_tro = 'nhan_vien'";
-
+// Lấy dữ liệu
+$sql = "SELECT u.ma_nhan_vien, u.ho_ten, cl.ngay, cl.ten_ca, cc.gio_check_in, cc.gio_check_out, cc.so_gio_lam, cl.luong_gio, cl.he_so_luong
+        FROM cham_cong cc
+        JOIN dang_ky_ca dkc ON cc.dang_ky_ca_id = dkc.id
+        JOIN ca_lam cl ON dkc.ca_lam_id = cl.id
+        JOIN nguoi_dung u ON dkc.nguoi_dung_id = u.id
+        WHERE MONTH(cl.ngay) = ? AND YEAR(cl.ngay) = ?
+        ORDER BY u.ho_ten ASC, cl.ngay ASC";
 $stmt = $pdo->prepare($sql);
-$stmt->execute([$thang, $nam, $thang, $nam, $thang, $nam]);
+$stmt->execute([$thang, $nam]);
 $data = $stmt->fetchAll();
 
-foreach ($data as $row) {
-    $tong_luong = $row['tong_luong'] ?? 0;
-    $da_ung = $row['da_ung'] ?? 0;
-    $thuc_linh = $tong_luong - $da_ung;
+// Chuẩn bị dữ liệu Excel
+$excelData = [
+    ['BANG LUONG THANG ' . $thang . '/' . $nam], // Tiêu đề
+    ['Ngay xuat: ' . date('d/m/Y')],
+    [],
+    ['Ma NV', 'Ho Ten', 'Ngay', 'Ca Lam', 'Gio Vao', 'Gio Ra', 'So Gio', 'Luong/H', 'He So', 'Thanh Tien'] // Header
+];
 
-    if ($tong_luong > 0 || $da_ung > 0) { // Chỉ xuất người có lương hoặc có ứng
-        fputcsv($output, [
-            $row['id'],
-            $row['ho_ten'],
-            $row['email'],
-            number_format($row['tong_gio'], 2),
-            number_format($tong_luong),
-            number_format($da_ung),
-            number_format($thuc_linh)
-        ]);
-    }
+$total_money = 0;
+foreach ($data as $row) {
+    $thanh_tien = $row['so_gio_lam'] * $row['luong_gio'] * $row['he_so_luong'];
+    $total_money += $thanh_tien;
+
+    $excelData[] = [
+        $row['ma_nhan_vien'],
+        $row['ho_ten'],
+        date('d/m/Y', strtotime($row['ngay'])),
+        $row['ten_ca'],
+        $row['gio_check_in'] ? date('H:i', strtotime($row['gio_check_in'])) : '-',
+        $row['gio_check_out'] ? date('H:i', strtotime($row['gio_check_out'])) : '-',
+        $row['so_gio_lam'],
+        $row['luong_gio'],
+        $row['he_so_luong'],
+        $thanh_tien
+    ];
 }
-fclose($output);
+
+$excelData[] = ['', '', '', '', '', '', '', '', 'TONG CONG:', $total_money];
+
+// Xuất file
+$xlsx = Shuchkin\SimpleXLSXGen::fromArray($excelData);
+$xlsx->downloadAs('Bang_luong_T'.$thang.'.xlsx');
 exit();
 ?>
