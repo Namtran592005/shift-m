@@ -1,4 +1,4 @@
-<?php 
+<?php
 require_once 'includes/config.php';
 require_once 'includes/functions.php';
 requireAdmin($pdo);
@@ -8,175 +8,235 @@ $stmt = $pdo->prepare("SELECT * FROM ca_lam WHERE ma_qr = ?");
 $stmt->execute([$code]);
 $ca = $stmt->fetch();
 
-if (!$ca) die("Mã QR không hợp lệ hoặc ca làm đã bị xóa.");
+if (!$ca)
+    die("Mã QR không hợp lệ.");
 
-// Tự động lấy đường dẫn logo chuẩn SEO/Tuyệt đối
-$protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' || $_SERVER['SERVER_PORT'] == 443) ? "https://" : "http://";
+$protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? "https://" : "http://";
 $baseUrl = $protocol . $_SERVER['HTTP_HOST'] . str_replace(basename($_SERVER['PHP_SELF']), '', $_SERVER['PHP_SELF']);
 $logoUrl = $baseUrl . 'assets/img/logo.png';
 ?>
 <!DOCTYPE html>
 <html lang="vi">
+
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>QR: <?php echo htmlspecialchars($ca['ten_ca']); ?></title>
-    
     <script src="assets/js/qrcode.min.js"></script>
     <link rel="stylesheet" href="assets/vendor/fontawesome/css/all.min.css">
-
     <style>
-        :root { --bg-dark: #111827; --bg-card: #1f2937; --text-light: #f9fafb; --text-gray: #9ca3af; --primary: #3b82f6; }
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
-        body { background-color: var(--bg-dark); color: var(--text-light); height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; overflow: hidden; }
-
-        .qr-container {
-            background: var(--bg-card); padding: 30px; border-radius: 24px; text-align: center;
-            width: 90%; max-width: 400px; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.5);
-            position: relative; display: flex; flex-direction: column; align-items: center;
+        :root {
+            --bg: #0f172a;
+            --card: #1e293b;
+            --primary: #3b82f6;
+            --text: #f1f5f9;
         }
 
-        .ca-info { margin-bottom: 25px; }
-        .ca-name { font-size: 22px; font-weight: 700; margin-bottom: 8px; color: white; }
-        .ca-time { font-size: 15px; color: var(--text-gray); background: rgba(255,255,255,0.1); padding: 6px 12px; border-radius: 20px; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: sans-serif;
+        }
 
-        /* --- WRAPPER ĐỂ CHỒNG LOGO --- */
+        body {
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100dvh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 15px;
+        }
+
+        .qr-card {
+            background: var(--card);
+            padding: 25px 15px;
+            border-radius: 24px;
+            width: 100%;
+            max-width: 350px;
+            text-align: center;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            position: relative;
+        }
+
+        .ca-name {
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .ca-time {
+            display: inline-block;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            color: #94a3b8;
+            margin-bottom: 20px;
+        }
+
+        /* KHẮC PHỤC LỖI TRÀN MÀN HÌNH */
         .qr-wrapper {
             position: relative;
             background: white;
-            padding: 15px;
-            border-radius: 12px;
-            box-shadow: 0 0 20px rgba(59, 130, 246, 0.3);
-            margin-bottom: 20px;
-            display: inline-block;
+            padding: 12px;
+            border-radius: 16px;
+            margin: 0 auto 20px;
+            width: 100%;
+            max-width: 260px;
+            /* QR sẽ không bao giờ to hơn mức này */
+            aspect-ratio: 1/1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
-        #qrcode img {
-            width: 240px !important;
-            height: 240px !important;
-            display: block;
+        #qrcode {
+            width: 100%;
         }
 
-        /* --- LOGO Ở GIỮA --- */
+        #qrcode img,
+        #qrcode canvas {
+            width: 100% !important;
+            /* Ép ảnh QR co giãn theo wrapper */
+            height: auto !important;
+        }
+
         .qr-logo-overlay {
             position: absolute;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            width: 50px;  /* Kích thước logo */
-            height: 50px;
+            width: 20%;
+            height: 20%;
             background: white;
-            padding: 4px; /* Viền trắng quanh logo để tách khỏi mã QR */
-            border-radius: 8px;
+            padding: 2px;
+            border-radius: 5px;
             object-fit: contain;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
         }
 
-        .guide-text { color: var(--primary); font-weight: 600; font-size: 14px; text-transform: uppercase; animation: pulse 2s infinite; }
-        .btn-close { position: absolute; top: 15px; right: 15px; color: var(--text-gray); background: none; border: none; font-size: 24px; cursor: pointer; padding: 5px; }
-        .action-bar { margin-top: 30px; display: flex; gap: 20px; }
-        .action-btn { background: transparent; color: var(--text-gray); border: 1px solid var(--text-gray); padding: 8px 16px; border-radius: 8px; font-size: 13px; cursor: pointer; display: flex; align-items: center; gap: 6px; transition: 0.2s; }
-        .action-btn:hover { border-color: white; color: white; }
-        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
-        
-        @media (max-width: 380px) {
-            .qr-container { padding: 20px; width: 95%; }
-            #qrcode img { width: 200px !important; height: 200px !important; }
-            .qr-logo-overlay { width: 40px; height: 40px; }
+        .action-bar {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            width: 100%;
+            max-width: 350px;
+            margin-top: 20px;
+        }
+
+        .btn {
+            background: var(--card);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 12px;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        .btn:active {
+            background: var(--primary);
+            transform: scale(0.98);
+        }
+
+        .btn-close {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: none;
+            border: none;
+            color: #64748b;
+            font-size: 1.2rem;
         }
     </style>
 </head>
+
 <body>
 
-    <div class="qr-container">
-        <button class="btn-close" onclick="window.close()"><i class="fa-solid fa-xmark"></i></button>
+    <div class="qr-card">
+        <button class="btn-close" onclick="window.close()"><i class="fa-solid fa-circle-xmark"></i></button>
 
-        <div class="ca-info">
-            <div class="ca-name"><?php echo htmlspecialchars($ca['ten_ca']); ?></div>
-            <div class="ca-time">
-                <i class="fa-regular fa-clock"></i> 
-                <?php echo substr($ca['gio_bat_dau'], 0, 5) . ' - ' . substr($ca['gio_ket_thuc'], 0, 5); ?>
-            </div>
-        </div>
+        <div class="ca-name"><?php echo htmlspecialchars($ca['ten_ca']); ?></div>
+        <div class="ca-time"><i class="fa-regular fa-clock"></i> <?php echo substr($ca['gio_bat_dau'], 0, 5); ?> -
+            <?php echo substr($ca['gio_ket_thuc'], 0, 5); ?></div>
 
         <div class="qr-wrapper">
             <div id="qrcode"></div>
-            <!-- Logo nằm đè lên QR -->
             <img src="<?php echo $logoUrl; ?>" class="qr-logo-overlay" id="qrLogo" onerror="this.style.display='none'">
         </div>
 
-        <div class="guide-text"><i class="fa-solid fa-camera"></i> Quét để điểm danh</div>
+        <div style="color: var(--primary); font-weight: bold; font-size: 0.8rem; text-transform: uppercase;">
+            <i class="fa-solid fa-qrcode"></i> Quét mã để điểm danh
+        </div>
     </div>
 
     <div class="action-bar">
-        <button onclick="window.print()" class="action-btn"><i class="fa-solid fa-print"></i> In QR</button>
-        <button onclick="downloadQRWithLogo()" class="action-btn"><i class="fa-solid fa-download"></i> Tải ảnh</button>
+        <button onclick="window.print()" class="btn"><i class="fa-solid fa-print"></i> In mã</button>
+        <button onclick="downloadQRWithLogo()" class="btn"><i class="fa-solid fa-download"></i> Tải ảnh</button>
     </div>
 
     <script>
-        // Tạo QR Code
+        // Tạo QR với kích thước 500 để khi tải về/in ra vẫn sắc nét
         var qrcode = new QRCode(document.getElementById("qrcode"), {
             text: "<?php echo $code; ?>",
-            width: 500, // Size gốc lớn để nét
+            width: 500,
             height: 500,
-            colorDark : "#000000",
-            colorLight : "#ffffff",
-            // QUAN TRỌNG: Mức sửa lỗi cao nhất (High) để chèn logo không bị hỏng mã
-            correctLevel : QRCode.CorrectLevel.H
+            colorDark: "#000000",
+            colorLight: "#ffffff",
+            correctLevel: QRCode.CorrectLevel.H
         });
 
-        // Hàm xử lý tải ảnh (Gộp QR và Logo thành 1 ảnh duy nhất)
         function downloadQRWithLogo() {
             const qrImg = document.querySelector("#qrcode img");
             const logoImg = document.getElementById("qrLogo");
-            
-            if (qrImg && qrImg.src) {
-                // Tạo Canvas ảo để vẽ
-                const canvas = document.createElement("canvas");
-                const ctx = canvas.getContext("2d");
-                
-                // Set kích thước canvas bằng ảnh QR gốc (500x500)
-                const size = 500;
-                canvas.width = size;
-                canvas.height = size;
 
-                // 1. Vẽ nền trắng
-                ctx.fillStyle = "#ffffff";
-                ctx.fillRect(0, 0, size, size);
+            const canvas = document.createElement("canvas");
+            const ctx = canvas.getContext("2d");
+            const size = 600; // Tăng size canvas để ảnh tải về cực nét
+            canvas.width = size;
+            canvas.height = size;
 
-                // 2. Vẽ mã QR
-                const img1 = new Image();
-                img1.onload = function() {
-                    ctx.drawImage(img1, 0, 0, size, size);
+            ctx.fillStyle = "#ffffff";
+            ctx.fillRect(0, 0, size, size);
 
-                    // 3. Vẽ Logo ở giữa
+            const img1 = new Image();
+            img1.onload = function () {
+                ctx.drawImage(img1, 0, 0, size, size);
+
+                if (logoImg.style.display !== 'none') {
                     const img2 = new Image();
-                    // Để tránh lỗi CORS khi vẽ ảnh từ URL khác (nếu có)
-                    img2.crossOrigin = "anonymous"; 
-                    img2.onload = function() {
-                        // Tính toán vị trí logo (20% kích thước QR)
-                        const logoSize = size * 0.22; 
-                        const logoPos = (size - logoSize) / 2;
-
-                        // Vẽ viền trắng cho logo
+                    img2.crossOrigin = "anonymous";
+                    img2.onload = function () {
+                        const lSize = size * 0.22;
+                        const lPos = (size - lSize) / 2;
                         ctx.fillStyle = "#ffffff";
-                        // Bo tròn viền (giả lập) bằng cách vẽ hình chữ nhật bo góc hoặc vuông
-                        ctx.fillRect(logoPos - 5, logoPos - 5, logoSize + 10, logoSize + 10);
+                        ctx.fillRect(lPos - 5, lPos - 5, lSize + 10, lSize + 10);
+                        ctx.drawImage(img2, lPos, lPos, lSize, lSize);
 
-                        ctx.drawImage(img2, logoPos, logoPos, logoSize, logoSize);
-
-                        // 4. Tải về
-                        const link = document.createElement("a");
-                        link.href = canvas.toDataURL("image/png");
-                        link.download = "QR_<?php echo $ca['id']; ?>_ShiftM.png";
-                        link.click();
+                        triggerDownload(canvas);
                     };
                     img2.src = logoImg.src;
-                };
-                img1.src = qrImg.src;
-            }
+                } else {
+                    triggerDownload(canvas);
+                }
+            };
+            img1.src = qrImg.src;
+        }
+
+        function triggerDownload(canvas) {
+            const link = document.createElement("a");
+            link.href = canvas.toDataURL("image/png");
+            link.download = "QR_Checkin_ShiftM.png";
+            link.click();
         }
     </script>
-
 </body>
+
 </html>

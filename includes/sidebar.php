@@ -1,5 +1,6 @@
 <?php
-if (!isset($user)) $user = getCurrentUser($pdo);
+if (!isset($user))
+    $user = getCurrentUser($pdo);
 $page = basename($_SERVER['PHP_SELF']);
 ?>
 
@@ -21,9 +22,10 @@ $page = basename($_SERVER['PHP_SELF']);
 <!-- 3. SIDEBAR DESKTOP -->
 <aside class="sidebar" id="mainSidebar">
     <div class="mobile-close-btn-container">
-        <button onclick="toggleSidebar()" style="background: none; border: none; color: white; font-size: 20px;"><i class="fa-solid fa-xmark"></i></button>
+        <button onclick="toggleSidebar()" style="background: none; border: none; color: white; font-size: 20px;"><i
+                class="fa-solid fa-xmark"></i></button>
     </div>
-    
+
     <div class="brand">
         <img src="assets/img/logo.png" alt="Logo" class="sidebar-logo-img" onerror="this.style.display='none'">
         <span>Shift-M</span>
@@ -33,9 +35,10 @@ $page = basename($_SERVER['PHP_SELF']);
         <img src="<?php echo getAvatar($user['avatar'], $user['vai_tro']); ?>" class="user-avatar">
         <div style="overflow: hidden;">
             <div style="font-weight: 600; color: white; white-space: nowrap;"><?php echo $user['ho_ten']; ?></div>
-            
+
             <!-- HIỂN THỊ MÃ SỐ NHÂN VIÊN -->
-            <div style="font-size: 11px; color: #60a5fa; font-family: monospace; font-weight: bold; margin-bottom: 2px;">
+            <div
+                style="font-size: 11px; color: #60a5fa; font-family: monospace; font-weight: bold; margin-bottom: 2px;">
                 <?php echo !empty($user['ma_nhan_vien']) ? $user['ma_nhan_vien'] : ''; ?>
             </div>
 
@@ -60,14 +63,15 @@ $page = basename($_SERVER['PHP_SELF']);
             </a>
             <a href="nfc_station.php" class="nav-item <?php echo $page == 'nfc_station.php' ? 'active' : ''; ?>">
                 <i class="fa-solid fa-id-card-clip"></i> <span>Mở quét NFC</span>
-            </a> 
+            </a>
             <a href="admin_duyet.php" class="nav-item <?php echo $page == 'admin_duyet.php' ? 'active' : ''; ?>">
                 <i class="fa-solid fa-list-check"></i> <span>Duyệt đăng ký</span>
             </a>
             <a href="admin_employees.php" class="nav-item <?php echo $page == 'admin_employees.php' ? 'active' : ''; ?>">
                 <i class="fa-solid fa-users"></i> <span>Nhân sự</span>
             </a>
-            <a href="admin_salary_advance.php" class="nav-item <?php echo $page == 'admin_salary_advance.php' ? 'active' : ''; ?>">
+            <a href="admin_salary_advance.php"
+                class="nav-item <?php echo $page == 'admin_salary_advance.php' ? 'active' : ''; ?>">
                 <i class="fa-solid fa-hand-holding-dollar"></i> <span>Duyệt ứng lương</span>
             </a>
             <a href="admin_analysis.php" class="nav-item <?php echo $page == 'admin_analysis.php' ? 'active' : ''; ?>">
@@ -101,7 +105,8 @@ $page = basename($_SERVER['PHP_SELF']);
     </nav>
 
     <div class="sidebar-footer">
-        <a href="actions/logout.php" style="color: #ef4444; display: flex; align-items: center; gap: 10px; font-weight: 500;">
+        <a href="actions/logout.php"
+            style="color: #ef4444; display: flex; align-items: center; gap: 10px; font-weight: 500;">
             <i class="fa-solid fa-right-from-bracket"></i> <span>Đăng xuất</span>
         </a>
     </div>
@@ -117,9 +122,35 @@ $page = basename($_SERVER['PHP_SELF']);
 </script>
 
 <style>
-    .menu-label { margin: 20px 0 10px 15px; font-size: 11px; font-weight: bold; text-transform: uppercase; color: #6b7280; }
-    .nav-item i { width: 24px; text-align: center; font-size: 16px; }
-    .nav-item span { margin-left: 5px; }
-    .mobile-logo-img { background: white; padding: 2px; border-radius: 4px; }
-    @media(max-width: 992px){ .mobile-close-btn-container { display: flex !important; justify-content: flex-end; padding: 10px 15px; } }
+    .menu-label {
+        margin: 20px 0 10px 15px;
+        font-size: 11px;
+        font-weight: bold;
+        text-transform: uppercase;
+        color: #6b7280;
+    }
+
+    .nav-item i {
+        width: 24px;
+        text-align: center;
+        font-size: 16px;
+    }
+
+    .nav-item span {
+        margin-left: 5px;
+    }
+
+    .mobile-logo-img {
+        background: white;
+        padding: 2px;
+        border-radius: 4px;
+    }
+
+    @media(max-width: 992px) {
+        .mobile-close-btn-container {
+            display: flex !important;
+            justify-content: flex-end;
+            padding: 10px 15px;
+        }
+    }
 </style>
