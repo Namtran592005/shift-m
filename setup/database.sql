@@ -51,8 +51,8 @@ CREATE TABLE `nguoi_dung` (
 --
 
 INSERT INTO `nguoi_dung` (`id`, `ma_nhan_vien`, `ho_ten`, `email`, `mat_khau`, `avatar`, `vai_tro`, `nfc_uid`, `trang_thai`) VALUES
-(1, 'ADMIN', 'Administrator', 'admin@gmail.com', '$2a$12$myqDbxwd0nQIEwt4y8J49.pW1ag1WAsKAO88I1LKfWUCa7qGMLeTS', NULL, 'admin', NULL, 1),
-(2, 'NV001', 'Nguyễn Văn A', 'nhanvien@gmail.com', '$2a$12$myqDbxwd0nQIEwt4y8J49.pW1ag1WAsKAO88I1LKfWUCa7qGMLeTS', NULL, 'nhan_vien', NULL, 1);
+(1, 'ADMIN', 'Administrator', 'admin@test.com', '$2a$12$myqDbxwd0nQIEwt4y8J49.pW1ag1WAsKAO88I1LKfWUCa7qGMLeTS', NULL, 'admin', NULL, 1),
+(2, 'NV001', 'Nguyễn Văn A', 'nhanvien@test.com', '$2a$12$myqDbxwd0nQIEwt4y8J49.pW1ag1WAsKAO88I1LKfWUCa7qGMLeTS', NULL, 'nhan_vien', NULL, 1);
 -- Mật khẩu là 123456
 
 -- --------------------------------------------------------
