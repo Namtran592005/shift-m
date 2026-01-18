@@ -1,0 +1,865 @@
+/* =========================================
+   1. VARIABLES & RESET
+   ========================================= */
+:root {
+  /* --- COLORS --- */
+  --primary: #2563eb; /* Xanh chủ đạo */
+  --primary-dark: #1e40af;
+  --primary-light: #eff6ff;
+
+  --bg-body: #f1f5f9; /* Nền xám nhạt */
+  --bg-card: #ffffff; /* Nền trắng */
+  --bg-sidebar: #0f172a; /* Nền sidebar tối */
+
+  --text-main: #1e293b; /* Chữ đen */
+  --text-muted: #64748b; /* Chữ xám */
+  --text-light: #94a3b8; /* Chữ mờ */
+
+  --border: #e2e8f0; /* Viền */
+
+  --success: #10b981; /* Xanh lá */
+  --success-bg: #dcfce7;
+  --warning: #f59e0b; /* Vàng cam */
+  --warning-bg: #fef3c7;
+  --danger: #ef4444; /* Đỏ */
+  --danger-bg: #fee2e2;
+
+  /* --- DIMENSIONS --- */
+  --sidebar-width: 260px;
+  --header-height: 60px;
+  --radius: 10px;
+
+  /* --- TYPOGRAPHY --- */
+  --font-stack:
+    -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial,
+    sans-serif;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: var(--font-stack);
+}
+body {
+  background: var(--bg-body);
+  color: var(--text-main);
+  font-size: 14px;
+  line-height: 1.5;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+a {
+  text-decoration: none;
+  color: inherit;
+  transition: 0.2s;
+}
+ul {
+  list-style: none;
+}
+img {
+  max-width: 100%;
+  display: block;
+}
+input,
+button,
+select,
+textarea {
+  font-family: inherit;
+  font-size: inherit;
+}
+
+/* =========================================
+   2. GLOBAL LAYOUT (DESKTOP DEFAULT)
+   ========================================= */
+.wrapper {
+  display: flex;
+  width: 100%;
+  min-height: 100vh;
+}
+
+/* --- SIDEBAR --- */
+.sidebar {
+  width: var(--sidebar-width);
+  background: var(--bg-sidebar);
+  color: white;
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 1002;
+  height: 100vh;
+  position: sticky;
+  top: 0;
+  overflow-y: auto;
+}
+
+.brand {
+  height: 64px;
+  display: flex;
+  align-items: center;
+  padding: 0 24px;
+  font-size: 20px;
+  font-weight: 800;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  flex-shrink: 0;
+}
+.user-panel {
+  padding: 20px 24px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  flex-shrink: 0;
+}
+.user-avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+}
+
+.nav-links {
+  flex: 1;
+  overflow-y: auto;
+  padding: 15px 12px;
+}
+.nav-links::-webkit-scrollbar {
+  width: 4px;
+}
+.nav-links::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 2px;
+}
+
+.menu-label {
+  font-size: 11px;
+  text-transform: uppercase;
+  color: var(--text-light);
+  font-weight: 700;
+  margin: 15px 12px 5px;
+}
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  color: #cbd5e1;
+  border-radius: var(--radius);
+  font-weight: 500;
+  margin-bottom: 4px;
+}
+.nav-item:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+}
+.nav-item.active {
+  background: var(--primary);
+  color: white;
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.4);
+}
+.nav-item i {
+  width: 20px;
+  text-align: center;
+}
+
+.sidebar-footer {
+  padding: 20px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  flex-shrink: 0;
+}
+
+/* --- MAIN CONTENT --- */
+.main-content {
+  flex: 1;
+  padding: 30px;
+  width: 100%;
+  overflow-x: hidden;
+}
+
+/* --- MOBILE HEADER & OVERLAY (HIDDEN ON DESKTOP) --- */
+.mobile-header-toggle {
+  display: none;
+}
+.sidebar-overlay {
+  display: none;
+}
+.mobile-close-btn-container {
+  display: none;
+}
+
+/* =========================================
+   3. COMPONENTS
+   ========================================= */
+/* --- CARD --- */
+.card {
+  background: var(--bg-card);
+  border-radius: var(--radius);
+  padding: 24px;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+  border: 1px solid var(--border);
+  margin-bottom: 24px;
+  position: relative;
+}
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+.card-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text-main);
+}
+
+/* --- BUTTONS --- */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 16px;
+  height: 40px;
+  border-radius: var(--radius);
+  font-weight: 600;
+  cursor: pointer;
+  border: 1px solid transparent;
+  gap: 8px;
+  transition: 0.2s;
+  white-space: nowrap;
+  font-size: 14px;
+}
+.btn-sm {
+  height: 32px;
+  padding: 0 12px;
+  font-size: 12px;
+}
+.btn-primary {
+  background: var(--primary);
+  color: white;
+}
+.btn-primary:hover {
+  background: var(--primary-dark);
+}
+.btn-danger {
+  background: var(--danger);
+  color: white;
+}
+.btn-outline {
+  background: white;
+  border-color: var(--border);
+  color: var(--text-main);
+}
+.btn-outline:hover {
+  background: #f8fafc;
+  border-color: #cbd5e1;
+}
+.w-full {
+  width: 100%;
+}
+
+/* --- FORMS --- */
+.input-group {
+  margin-bottom: 16px;
+}
+.input-group label {
+  display: block;
+  margin-bottom: 6px;
+  font-weight: 500;
+  font-size: 13px;
+  color: var(--text-main);
+}
+.form-control {
+  width: 100%;
+  height: 40px;
+  padding: 0 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: white;
+  color: var(--text-main);
+  transition: 0.2s;
+}
+.form-control:focus {
+  border-color: var(--primary);
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+}
+
+/* --- TABLES --- */
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+th {
+  text-align: left;
+  padding: 12px 16px;
+  background: #f8fafc;
+  color: var(--text-muted);
+  font-weight: 600;
+  font-size: 12px;
+  text-transform: uppercase;
+  border-bottom: 1px solid var(--border);
+}
+td {
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--border);
+  vertical-align: middle;
+  color: var(--text-main);
+}
+tr:last-child td {
+  border-bottom: none;
+}
+
+/* --- BADGES --- */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+.badge.mo,
+.badge.da_duyet,
+.badge.hoat_dong {
+  background: var(--success-bg);
+  color: var(--success);
+}
+.badge.cho_duyet {
+  background: var(--warning-bg);
+  color: #b45309;
+}
+.badge.huy,
+.badge.tu_choi,
+.badge.dong,
+.badge.khoa {
+  background: var(--danger-bg);
+  color: #b91c1c;
+}
+
+/* --- UTILITIES --- */
+.flex {
+  display: flex;
+}
+.justify-between {
+  justify-content: space-between;
+}
+.items-center {
+  align-items: center;
+}
+.gap-10 {
+  gap: 10px;
+}
+.gap-20 {
+  gap: 20px;
+}
+.mb-20 {
+  margin-bottom: 20px;
+}
+.text-right {
+  text-align: right;
+}
+.text-center {
+  text-align: center;
+  justify-items: center;
+}
+.mt-20 {
+  margin-top: 20px;
+}
+
+/* =========================================
+   4. MODULES (CALENDAR, IOS SWITCH, SCANNER)
+   ========================================= */
+
+/* --- CALENDAR (DESKTOP GRID) --- */
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 1px;
+  background: var(--border);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+}
+.cal-head {
+  background: #f8fafc;
+  padding: 10px;
+  text-align: center;
+  font-weight: 700;
+  font-size: 13px;
+  color: var(--text-muted);
+}
+.cal-cell {
+  background: white;
+  min-height: 100px;
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+}
+.cal-cell.is-today {
+  background: #eff6ff;
+}
+
+/* Desktop Date View */
+.desktop-date {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 5px;
+  font-weight: 700;
+  color: var(--text-muted);
+  font-size: 13px;
+}
+.today-tag {
+  font-size: 10px;
+  background: var(--primary);
+  color: white;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+.mobile-date-badge {
+  display: none;
+} /* Hidden on Desktop */
+
+/* Events */
+.event-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.event {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 6px;
+  border-radius: 4px;
+  font-size: 12px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  cursor: pointer;
+  text-decoration: none;
+  color: inherit;
+  transition: 0.2s;
+}
+.event:hover {
+  opacity: 0.8;
+  transform: translateX(2px);
+}
+
+/* Shift Cards Grid */
+.shift-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 20px;
+}
+.shift-card {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  border: 1px solid var(--border);
+  margin-bottom: 0;
+}
+.shift-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: start;
+  margin-bottom: 15px;
+}
+.shift-name {
+  font-weight: 700;
+  font-size: 16px;
+  color: var(--text-main);
+  line-height: 1.4;
+}
+.shift-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  color: var(--text-muted);
+  margin-bottom: 8px;
+}
+.shift-price {
+  margin-top: 15px;
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--primary);
+}
+
+/* --- IOS SWITCH (SETTINGS) --- */
+.ios-switch {
+  position: relative;
+  display: inline-block;
+  width: 51px;
+  height: 31px;
+}
+.ios-switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+.ios-slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #e9e9ea;
+  transition: 0.3s;
+  border-radius: 34px;
+}
+.ios-slider:before {
+  position: absolute;
+  content: "";
+  height: 27px;
+  width: 27px;
+  left: 2px;
+  bottom: 2px;
+  background-color: white;
+  transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  border-radius: 50%;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+input:checked + .ios-slider {
+  background-color: #34c759;
+}
+input:checked + .ios-slider:before {
+  transform: translateX(20px);
+}
+
+/* --- QR SCANNER --- */
+.scanner-wrapper {
+  position: relative;
+  width: 100%;
+  min-height: 300px;
+  background: #000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+#reader {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+#reader video {
+  width: 100% !important;
+  height: auto !important;
+}
+.scan-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  display: none;
+}
+.scan-laser {
+  position: absolute;
+  top: 0;
+  left: 10%;
+  width: 80%;
+  height: 2px;
+  background: rgba(37, 99, 235, 0.8);
+  box-shadow: 0 0 4px rgba(37, 99, 235, 1);
+  animation: scanning 2s infinite;
+}
+@keyframes scanning {
+  0% {
+    top: 10%;
+  }
+  50% {
+    top: 90%;
+  }
+  100% {
+    top: 10%;
+  }
+}
+
+/* =========================================
+   5. MOBILE RESPONSIVE (CORE MAGIC)
+   ========================================= */
+@media (max-width: 992px) {
+  /* 5.1 GLOBAL MOBILE LAYOUT */
+  .wrapper {
+    flex-direction: column;
+    padding-top: var(--header-height);
+  }
+  .main-content {
+    padding: 15px;
+    width: 100%;
+  }
+
+  /* 5.2 MOBILE HEADER */
+  .mobile-header-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: var(--header-height);
+    background: var(--primary);
+    color: white;
+    z-index: 1000;
+    padding: 0 20px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  }
+  .mobile-brand {
+    font-weight: 800;
+    font-size: 20px;
+  }
+  .btn-toggle-menu {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 24px;
+    cursor: pointer;
+  }
+
+  /* 5.3 OFF-CANVAS SIDEBAR */
+  .sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 280px;
+    z-index: 1002;
+    transform: translateX(-100%);
+    border-right: 1px solid rgba(255, 255, 255, 0.1);
+    background: var(--bg-sidebar);
+    padding-top: 0;
+  }
+  .sidebar.show {
+    transform: translateX(0);
+  }
+  .sidebar .brand {
+    display: none !important;
+  } /* Hide duplicate brand */
+  .mobile-close-btn-container {
+    display: flex !important;
+    justify-content: flex-end;
+    padding: 15px;
+  }
+
+  /* Overlay */
+  .sidebar-overlay {
+    display: block;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 1001;
+    opacity: 0;
+    visibility: hidden;
+    transition: 0.3s;
+    backdrop-filter: blur(3px);
+  }
+  .sidebar-overlay.show {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  /* 5.4 FLEX UTILITIES OVERRIDE (Stack columns) */
+  .flex-col-mobile {
+    flex-direction: column !important;
+    gap: 15px !important;
+  }
+
+  /* Force elements inside to be full width */
+  .flex-col-mobile > div,
+  .flex-col-mobile > .card,
+  .flex-col-mobile > .input-group,
+  .flex-col-mobile > button,
+  .flex-col-mobile > a,
+  .flex-col-mobile > .btn {
+    flex: none !important;
+    width: 100% !important;
+    margin-right: 0 !important;
+    max-width: 100% !important;
+  }
+
+  /* 5.5 FORM & INPUTS */
+  form .flex {
+    flex-direction: column;
+    gap: 15px;
+  }
+  form .input-group {
+    width: 100% !important;
+    flex: none !important;
+  }
+  form button[type="submit"],
+  form .btn {
+    width: 100%;
+    margin-top: 5px;
+    justify-content: center;
+  }
+  input,
+  select,
+  button,
+  .btn {
+    min-height: 44px;
+    font-size: 16px; /* Prevent iOS zoom */
+  }
+
+  /* 5.6 SCROLLABLE TABLES */
+  .card {
+    overflow: hidden;
+  }
+  .card table {
+    display: block;
+    width: 100%;
+    overflow-x: auto;
+    white-space: nowrap;
+    -webkit-overflow-scrolling: touch;
+  }
+  .card th,
+  .card td {
+    padding: 12px 15px;
+  }
+
+  /* 5.7 CALENDAR (GRID -> AGENDA VIEW) */
+  .p-0-mobile {
+    padding: 0 !important;
+  }
+  .calendar-grid {
+    display: flex;
+    flex-direction: column;
+    background: transparent;
+    border: none;
+    gap: 10px;
+  }
+  .cal-head,
+  .empty-cell {
+    display: none;
+  } /* Hide headers & empty cells */
+
+  .cal-cell {
+    min-height: auto;
+    border-radius: 12px;
+    border: 1px solid var(--border);
+    flex-direction: row; /* Date Left, Event Right */
+    gap: 15px;
+    padding: 15px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+  }
+  /* HIDE days without events (except today) */
+  .cal-cell:not(.has-event):not(.is-today) {
+    display: none;
+  }
+
+  .desktop-date {
+    display: none;
+  }
+  .mobile-date-badge {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 50px;
+    height: 50px;
+    background: #f1f5f9;
+    border-radius: 10px;
+    flex-shrink: 0;
+  }
+  .is-today .mobile-date-badge {
+    background: var(--primary);
+    color: white;
+  }
+  .d-name {
+    font-size: 10px;
+    text-transform: uppercase;
+    font-weight: 600;
+  }
+  .d-num {
+    font-size: 18px;
+    font-weight: 800;
+    line-height: 1;
+  }
+
+  .event-list {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    justify-content: center;
+  }
+  .is-today:not(.has-event) .event-list::after {
+    content: "Không có sự kiện";
+    font-style: italic;
+    color: var(--text-muted);
+    font-size: 13px;
+  }
+
+  .event {
+    padding: 10px;
+    font-size: 14px;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    white-space: normal;
+  }
+  .shift-grid {
+    grid-template-columns: 1fr;
+  }
+
+  /* 5.8 MODAL FULLSCREEN */
+  .modal-box {
+    width: 100% !important;
+    height: 100% !important;
+    border-radius: 0 !important;
+    max-height: 100vh !important;
+    display: flex;
+    flex-direction: column;
+  }
+  .modal-box form {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
+}
+
+/* --- LOGO BRANDING --- */
+
+/* 1. Logo trang Login */
+.login-logo-img {
+  height: 60px; /* Chiều cao logo login */
+  width: auto;
+  margin-bottom: 15px;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* 2. Logo Sidebar (Desktop) */
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px; /* Khoảng cách giữa Logo và Chữ */
+}
+.sidebar-logo-img {
+  height: 32px; /* Chiều cao logo sidebar */
+  width: auto;
+  object-fit: contain;
+}
+
+/* 3. Logo Header (Mobile) */
+.mobile-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.mobile-logo-img {
+  height: 28px; /* Nhỏ hơn một chút cho vừa header mobile */
+  width: auto;
+  background: white; /* Nếu logo màu đen khó nhìn trên nền xanh, thêm nền trắng bo góc */
+  padding: 2px;
+  border-radius: 4px;
+}
