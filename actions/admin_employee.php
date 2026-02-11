@@ -60,7 +60,7 @@ elseif ($action == 'edit') {
     $email = trim($_POST['email']);
     $vai_tro = $_POST['vai_tro'];
     $trang_thai = $_POST['trang_thai'];
-    $nfc_uid = trim($_POST['nfc_uid']);
+    $nfc_uid = !empty(trim($_POST['nfc_uid'])) ? trim($_POST['nfc_uid']) : null;
     $so_cccd = trim($_POST['so_cccd']); // Mới
     $mat_khau_moi = trim($_POST['mat_khau']);
 
